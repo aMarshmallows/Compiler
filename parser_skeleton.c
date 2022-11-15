@@ -99,6 +99,7 @@ symbol *table;
 int table_index = 0;
 instruction *code;
 int code_index = 0;
+char symbol_name[12];
 
 int error = 0;
 int level;
@@ -113,34 +114,93 @@ void print_parser_error(int error_code, int case_code);
 void print_assembly_code();
 void print_symbol_table();
 
-int program()
+void program()
 {
 	add_symbol(3, "main", 0, 0, 0);
 	level = -1;
 	emit(7, -1, 0);
+	block();
+	if (tokens[token_index].error_type)
+		return;
+	if (tokens[token_index].type != period)
+	{
+		print_parser_error(1, 0);
+		tokens[token_index].error_type = 1;
+		return;
+	}
+	for (int i = 0; i < code_index; i++)
+	{
+		if (code[code_index].op == 5)
+		{
+			code[code_index].m = table[code[code_index].m].address;
+		}
+	}
+
+	// fix inital jump since we know main's address
+	code[0].m = table[0].address;
+	emit(3, 0, 0);
+	print_assembly_code();
+	print_symbol_table();
 }
 
-int block(token_index)
+void block()
 {
-	int where_our_procedure_is = table[]
+	int where_our_procedure_is = table_index;
+	level++;
+	int inc_m_value = declarations();
+	if (tokens[token_index].error_type)
+		return;
+	procedures();
+	if (tokens[token_index].error_type)
+		return;
+	emit(6, 0, inc_m_value);
+	statement();
+	if (tokens[token_index].error_type)
+		return;
+	mark();
+	level--;
 }
 
-void constFunct()
+int declarations()
 {
-	char symbol_name[12];
+	int num_variables_declared = 0;
+	while (tokens[token_index].type == keyword_const || tokens[token_index].type == keyword_var)
+	{
+		if (tokens[token_index].type == keyword_const)
+		{
+			constants();
+			if (tokens[token_index].error_type)
+				return;
+		}
+		else
+		{
+			variables(num_variables_declared);
+			if (tokens[token_index].error_type)
+				return;
+			num_variables_declared += 1;
+		}
+	}
+
+	return num_variables_declared + 3;
+}
+
+void constants()
+{
 	int number_value;
-	bool minus_flag = false;
+	int minus_flag = 0;
 	token_index++;
 
 	if (tokens[token_index].type != identifier)
 	{
 		print_parser_error(2, 1);
+		tokens[token_index].error_type = 2;
 		return;
 	}
 
 	if (multiple_declaration_check(tokens[token_index].identifier_name) != -1)
 	{
 		print_parser_error(3, 0);
+		tokens[token_index].error_type = 3;
 		return;
 	}
 
@@ -150,22 +210,24 @@ void constFunct()
 	if (tokens[token_index].type != assignment_symbol)
 	{
 		print_parser_error(4, 1);
+		tokens[token_index].error_type = 4;
 		return;
 	}
 
 	token_index++;
 	if (tokens[token_index].type == minus)
 	{
-		minus_flag = true;
+		minus_flag = 1;
 		token_index++;
 	}
 	if (tokens[token_index].type != number)
 	{
 		print_parser_error(5, 0);
+		tokens[token_index].error_type = 5;
 		return;
 	}
 
-	number_value = tokens[token_type].number_value;
+	number_value = tokens[token_index].number_value;
 	token_index++;
 
 	if (minus_flag)
@@ -178,9 +240,271 @@ void constFunct()
 	if (tokens[token_index].type != semicolon)
 	{
 		print_parser_error(6, 1);
+		tokens[token_index].error_type = 6;
+		return;
 	}
 
 	token_index++;
+}
+
+void variables(int numVars)
+{
+	token_index++;
+
+	if (tokens[token_index].type != identifier)
+	{
+		print_parser_error(2, 2);
+		tokens[token_index].error_type = 2;
+		return;
+	}
+
+	if (multiple_declaration_check(tokens[token_index].identifier_name) != -1)
+	{
+		print_parser_error(3, 0);
+		tokens[token_index].error_type = 3;
+		return;
+	}
+
+	strcpy(symbol_name, tokens[token_index].identifier_name);
+	token_index++;
+	add_symbol(2, symbol_name, 0, 0, numVars + 3);
+
+	if (tokens[token_index].type != semicolon)
+	{
+		print_parser_error(6, 2);
+		tokens[token_index].error_type = 6;
+		return;
+	}
+
+	token_index++;
+}
+
+void procedures()
+{
+	while (tokens[token_index].type == keyword_procedure)
+	{
+		token_index++;
+		if (tokens[token_index].type != identifier)
+		{
+			print_parser_error(2, 3);
+			tokens[token_index].error_type = 2;
+			return;
+		}
+		if (multiple_declaration_check(tokens[token_index].identifier_name) != -1)
+		{
+			print_parser_error(3, 0);
+			tokens[token_index].error_type = 3;
+			return;
+		}
+
+		strcpy(symbol_name, tokens[token_index].identifier_name);
+		token_index++;
+		add_symbol(3, symbol_name, 0, 0, 0);
+
+		if (tokens[token_index].type != left_curly_brace)
+		{
+			print_parser_error(14, 0);
+			tokens[token_index].error_type = 14;
+			return;
+		}
+		token_index++;
+		block();
+		if (tokens[token_index].error_type)
+			return;
+		emit(0, 0, 0);
+		if (tokens[token_index].type != right_curly_brace)
+		{
+			print_parser_error(15, 0);
+		}
+		token_index++;
+	}
+}
+
+void statement()
+{
+	int symbol_index_in_table;
+	if (tokens[token_index].type == keyword_def)
+	{
+		token_index++;
+		if (tokens[token_index].type != identifier)
+		{
+			print_parser_error(2, 6);
+			tokens[token_index].error_type = 2;
+			return;
+		}
+		symbol_index_in_table = find_symbol(tokens[token_index].identifier_name, 2);
+
+		if (symbol_index_in_table == -1)
+		{
+			if (find_symbol(tokens[token_index].identifier_name, 1) == find_symbol(tokens[token_index].identifier_name, 3))
+			{
+				print_parser_error(8, 1);
+				tokens[token_index].error_type = 8;
+				return;
+			}
+			else
+			{
+				print_parser_error(7, 0);
+				tokens[token_index].error_type = 7;
+				return;
+			}
+		}
+
+		token_index++;
+		if (tokens[token_index].type != assignment_symbol)
+		{
+			print_parser_error(4, 2);
+			tokens[token_index].error_type = 4;
+			return;
+		}
+		token_index++;
+		factor();
+		if (tokens[token_index].error_type)
+			return;
+		emit(4, level - table[symbol_index_in_table].level, table[symbol_index_in_table].address);
+	}
+	else if (tokens[token_index].type = keyword_call)
+	{
+		token_index++;
+		if (tokens[token_index].type != identifier)
+		{
+			print_parser_error(2, 4);
+			tokens[token_index].error_type = 2;
+			return;
+		}
+		symbol_index_in_table = find_symbol(tokens[token_index].identifier_name, 3);
+		if (symbol_index_in_table == -1)
+		{
+			if (find_symbol(tokens[token_index].identifier_name, 1) == find_symbol(tokens[token_index].identifier_name, 2))
+			{
+				print_parser_error(8, 2);
+				tokens[token_index].error_type = 8;
+				return;
+			}
+			else
+			{
+				print_parser_error(9, 0);
+				tokens[token_index].error_type = 9;
+				return;
+			}
+		}
+		token_index++;
+		emit(5, level - table[symbol_index_in_table].level, symbol_index_in_table);
+	}
+	else if (tokens[token_index].type == keyword_begin)
+	{
+		do
+		{
+			token_index++;
+			statement();
+			if (tokens[token_index].error_type)
+				return;
+		} while (tokens[token_index].type == semicolon);
+
+		if (tokens[token_index].type != keyword_end)
+		{
+			if (tokens[token_index].type == identifier || tokens[token_index].type == keyword_call ||
+				tokens[token_index].type == keyword_begin || tokens[token_index].type == keyword_read ||
+				tokens[token_index].type == keyword_def)
+			{
+				print_parser_error(6, 3);
+				tokens[token_index].error_type = 6;
+				return;
+			}
+			else
+			{
+				print_parser_error(10, 0);
+				tokens[token_index].error_type = 10;
+				return;
+			}
+		}
+		token_index++;
+	}
+	else if (tokens[token_index].type == keyword_read)
+	{
+		token_index++;
+		if (tokens[token_index].type != identifier)
+		{
+			print_parser_error(2, 5);
+			tokens[token_index].error_type = 2;
+			return;
+		}
+
+		symbol_index_in_table = find_symbol(tokens[token_index].identifier_name, 2);
+		if (symbol_index_in_table == -1)
+		{
+			if (find_symbol(tokens[token_index].identifier_name, 1) == find_symbol(tokens[token_index].identifier_name, 3))
+			{
+				print_parser_error(8, 3);
+				tokens[token_index].error_type = 8;
+				return;
+			}
+			else
+			{
+				print_parser_error(13, 0);
+				tokens[token_index].error_type = 13;
+				return;
+			}
+		}
+
+		token_index++;
+		emit(2, 0, 0);
+		emit(4, level - table[symbol_index_in_table].level, table[symbol_index_in_table].address);
+	}
+}
+
+void factor()
+{
+	if (tokens[token_index].type == identifier)
+	{
+		int constant_index = find_symbol(tokens[token_index].identifier_name, 1);
+		int variable_index = find_symbol(tokens[token_index].identifier_name, 2);
+
+		if (constant_index == variable_index)
+		{
+			if (find_symbol(tokens[token_index].identifier_name, 3) != -1)
+			{
+				print_parser_error(17, 0);
+				tokens[token_index].error_type = 17;
+				return;
+			}
+			else
+			{
+				print_parser_error(8, 4);
+				tokens[token_index].error_type = 8;
+				return;
+			}
+		}
+
+		if (constant_index == -1)
+		{
+			emit(3, level - table[table_index].level, table[table_index].address);
+		}
+		else if (variable_index == -1)
+		{
+			emit(1, 0, table[table_index].value);
+		}
+		else if (table[constant_index].level > table[variable_index].level)
+		{
+			emit(1, 0, table[constant_index].value);
+		}
+		else
+		{
+			emit(3, level - table[variable_index].level, table[variable_index].address);
+		}
+		token_index++;
+	}
+	else if (tokens[token_index].type == number)
+	{
+		emit(1, 0, tokens[token_index].number_value);
+		token_index++;
+	}
+	else
+	{
+		print_parser_error(19, 0);
+		tokens[token_index].error_type = 19;
+		return;
+	}
 }
 
 int main(int argc, char *argv[])
@@ -213,7 +537,7 @@ int main(int argc, char *argv[])
 	fclose(ifp);
 	token_index = 0;
 
-	// YOUR CODE HERE
+	program();
 
 	free(tokens);
 	free(table);
