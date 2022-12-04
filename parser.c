@@ -88,12 +88,14 @@ typedef struct symbol
 	int mark;
 } symbol;
 
+lexeme *tokens;
 int token_index = 0;
 symbol *table;
 int table_index = 0;
 instruction *code;
 int code_index = 0;
 char symbol_name[12];
+int flag_invalid = 0;
 
 int error = 0;
 int level;
@@ -186,6 +188,7 @@ int find_symbol(char name[], int kind)
 // prints parser errors
 void print_parser_error(int error_code, int case_code)
 {
+	flag_invalid = 1;
 	switch (error_code)
 	{
 	case 1:
@@ -423,7 +426,7 @@ void print_symbol_table()
 }
 
 // main program function
-void program()
+void program(code_flag, table_flag)
 {
 	add_symbol(3, "main", 0, 0, 0);
 	level = -1;
@@ -450,8 +453,11 @@ void program()
 	// fix inital jump since we know main's address
 	code[0].m = table[0].address;
 	emit(9, 0, 3);
-	print_assembly_code();
-	print_symbol_table();
+
+	if (code_flag)
+		print_assembly_code();
+	if (table_flag)
+		print_symbol_table();
 }
 
 // block statement called every level change
@@ -829,7 +835,7 @@ void factor()
 	}
 }
 
-instruction *parse(int code_flag, int table_flag, lexeme *tokens)
+instruction *parse(int code_flag, int table_flag, lexeme *list)
 {
 	// variable setup
 	int i;
@@ -837,10 +843,16 @@ instruction *parse(int code_flag, int table_flag, lexeme *tokens)
 	code = calloc(ARRAY_SIZE, sizeof(instruction));
 	FILE *ifp;
 	int buffer;
+	tokens = list;
 
 	token_index = 0;
 
-	program();
+	program(code_flag, table_flag);
+
+	if (flag_invalid)
+		return;
+	else
+		return code;
 
 	free(tokens);
 	free(table);
