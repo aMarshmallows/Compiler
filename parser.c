@@ -71,14 +71,6 @@ typedef enum opcode_name
 	GEQ = 10
 } opcode_name;
 
-typedef struct lexeme
-{
-	token_type type;
-	char identifier_name[12];
-	int number_value;
-	int error_type;
-} lexeme;
-
 typedef struct instruction
 {
 	int op;
@@ -96,7 +88,6 @@ typedef struct symbol
 	int mark;
 } symbol;
 
-lexeme *tokens;
 int token_index = 0;
 symbol *table;
 int table_index = 0;
@@ -838,39 +829,15 @@ void factor()
 	}
 }
 
-int main(int argc, char *argv[])
+instruction *parse(int code_flag, int table_flag, lexeme *tokens)
 {
 	// variable setup
 	int i;
-	tokens = calloc(ARRAY_SIZE, sizeof(lexeme));
 	table = calloc(ARRAY_SIZE, sizeof(symbol));
 	code = calloc(ARRAY_SIZE, sizeof(instruction));
 	FILE *ifp;
 	int buffer;
 
-	// read in input
-	if (argc < 2)
-	{
-		printf("Error : please include the file name\n");
-		return 0;
-	}
-
-	ifp = fopen(argv[1], "r");
-	while (fscanf(ifp, "%d", &buffer) != EOF)
-	{
-		tokens[token_index].type = buffer;
-		if (buffer == identifier)
-		{
-			fscanf(ifp, "%s", tokens[token_index].identifier_name);
-		}
-		else if (buffer == number)
-		{
-			fscanf(ifp, "%d", &(tokens[token_index].number_value));
-		}
-
-		token_index++;
-	}
-	fclose(ifp);
 	token_index = 0;
 
 	program();
