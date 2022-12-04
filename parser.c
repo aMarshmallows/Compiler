@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "compiler.h"
 
 #define ARRAY_SIZE 500
 
