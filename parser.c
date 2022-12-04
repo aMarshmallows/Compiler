@@ -849,6 +849,9 @@ instruction *parse(int code_flag, int table_flag, lexeme *list)
 
 	program(code_flag, table_flag);
 
+	// flag the end of the code array so vm knows when to stop
+	code[code_index].op = -1;
+
 	if (flag_invalid)
 		return;
 	else

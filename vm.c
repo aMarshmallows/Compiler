@@ -32,14 +32,16 @@ int base(int *pas, int BP, int L)
   return arb;
 }
 
-int main(int argc, char const *argv[])
+void execute(int trace_flag, instruction *code)
 {
-  FILE *fp = fopen(argv[1], "r");
+  int code_index = 0;
 
   // read input and save in PAS
-  while (!feof(fp))
+  while (code[code_index].op != -1)
   {
-    fscanf(fp, "%d %d %d", &PAS[bp], &(PAS[bp + 1]), &(PAS[bp + 2]));
+    PAS[bp] = code[code_index].op;
+    PAS[bp + 1] = code[code_index].l;
+    PAS[bp + 2] = code[code_index].m;
     bp += 3;
   }
 
