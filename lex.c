@@ -45,63 +45,77 @@ typedef enum
 } token_type;
 
 // return 1 if is a keyword, else return 0
-int isKeyword(char buffer[])
+int isKeyword(char buffer[], int list_flag)
 {
   if (strcmp(buffer, "const") == 0)
   {
-    printf("%s\t3\n", buffer);
+    if (list_flag)
+      printf("%s\t3\n", buffer);
   }
   else if (strcmp(buffer, "var") == 0)
   {
-    printf("%s\t4\n", buffer);
+    if (list_flag)
+      printf("%s\t4\n", buffer);
   }
   else if (strcmp(buffer, "procedure") == 0)
   {
-    printf("%s\t5\n", buffer);
+    if (list_flag)
+      printf("%s\t5\n", buffer);
   }
   else if (strcmp(buffer, "call") == 0)
   {
-    printf("%s\t6\n", buffer);
+    if (list_flag)
+      printf("%s\t6\n", buffer);
   }
   else if (strcmp(buffer, "begin") == 0)
   {
-    printf("%s\t7\n", buffer);
+    if (list_flag)
+      printf("%s\t7\n", buffer);
   }
   else if (strcmp(buffer, "end") == 0)
   {
-    printf("%s\t8\n", buffer);
+    if (list_flag)
+      printf("%s\t8\n", buffer);
   }
   else if (strcmp(buffer, "if") == 0)
   {
-    printf("%s\t9\n", buffer);
+    if (list_flag)
+      printf("%s\t9\n", buffer);
   }
   else if (strcmp(buffer, "then") == 0)
   {
-    printf("%s\t10\n", buffer);
+    if (list_flag)
+      printf("%s\t10\n", buffer);
   }
   else if (strcmp(buffer, "else") == 0)
   {
-    printf("%s\t11\n", buffer);
+    if (list_flag)
+      printf("%s\t11\n", buffer);
   }
   else if (strcmp(buffer, "while") == 0)
   {
-    printf("%s\t12\n", buffer);
+    if (list_flag)
+      printf("%s\t12\n", buffer);
   }
   else if (strcmp(buffer, "do") == 0)
   {
-    printf("%s\t13\n", buffer);
+    if (list_flag)
+      printf("%s\t13\n", buffer);
   }
   else if (strcmp(buffer, "read") == 0)
   {
-    printf("%s\t14\n", buffer);
+    if (list_flag)
+      printf("%s\t14\n", buffer);
   }
   else if (strcmp(buffer, "write") == 0)
   {
-    printf("%s\t15\n", buffer);
+    if (list_flag)
+      printf("%s\t15\n", buffer);
   }
   else if (strcmp(buffer, "def") == 0)
   {
-    printf("%s\t16\n", buffer);
+    if (list_flag)
+      printf("%s\t16\n", buffer);
   }
   else if (strcmp(buffer, "null") == 0 || strcmp(buffer, "main") == 0)
   {
@@ -115,17 +129,19 @@ int isKeyword(char buffer[])
 }
 
 // check if special character
-int isSpecialCharacter(char buffer[])
+int isSpecialCharacter(char buffer[], int list_flag)
 {
   if (buffer[0] == '.')
   {
-    printf(".\t17\n");
+    if (list_flag)
+      printf(".\t17\n");
   }
   else if (buffer[0] == ':')
   {
     if (buffer[1] == '=')
     {
-      printf(":=\t18\n");
+      if (list_flag)
+        printf(":=\t18\n");
     }
     else
     {
@@ -134,25 +150,30 @@ int isSpecialCharacter(char buffer[])
   }
   else if (buffer[0] == '-')
   {
-    printf("-\t19\n");
+    if (list_flag)
+      printf("-\t19\n");
   }
   else if (buffer[0] == ';')
   {
-    printf(";\t20\n");
+    if (list_flag)
+      printf(";\t20\n");
   }
   else if (buffer[0] == '{')
   {
-    printf("{\t21\n");
+    if (list_flag)
+      printf("{\t21\n");
   }
-  else if (buffer[0] ==  '}')
+  else if (buffer[0] == '}')
   {
-    printf("}\t22\n");
+    if (list_flag)
+      printf("}\t22\n");
   }
   else if (buffer[0] == '=')
   {
     if (buffer[1] == '=')
     {
-      printf("==\t23\n");
+      if (list_flag)
+        printf("==\t23\n");
     }
     else
     {
@@ -163,15 +184,18 @@ int isSpecialCharacter(char buffer[])
   {
     if (buffer[1] == '>')
     {
-      printf("<>\t24\n");
+      if (list_flag)
+        printf("<>\t24\n");
     }
     else if (buffer[1] == '\0')
     {
-      printf("<\t25\n");
+      if (list_flag)
+        printf("<\t25\n");
     }
     else if (buffer[1] == '=')
     {
-      printf("<=\t26\n");
+      if (list_flag)
+        printf("<=\t26\n");
     }
     else
     {
@@ -182,11 +206,13 @@ int isSpecialCharacter(char buffer[])
   {
     if (buffer[1] == '\0')
     {
-      printf(">\t27\n");
+      if (list_flag)
+        printf(">\t27\n");
     }
     else if (buffer[1] == '=')
     {
-      printf(">=\t28\n");
+      if (list_flag)
+        printf(">=\t28\n");
     }
     else
     {
@@ -195,23 +221,28 @@ int isSpecialCharacter(char buffer[])
   }
   else if (buffer[0] == '+')
   {
-    printf("+\t29\n");
+    if (list_flag)
+      printf("+\t29\n");
   }
   else if (buffer[0] == '*')
   {
-    printf("*\t30\n");
+    if (list_flag)
+      printf("*\t30\n");
   }
   else if (buffer[0] == '/')
   {
-    printf("/\t31\n");
+    if (list_flag)
+      printf("/\t31\n");
   }
   else if (buffer[0] == '(')
   {
-    printf("(\t32\n");
+    if (list_flag)
+      printf("(\t32\n");
   }
   else if (buffer[0] == ')')
   {
-    printf(")\t33\n");
+    if (list_flag)
+      printf(")\t33\n");
   }
   else
   {
@@ -220,28 +251,30 @@ int isSpecialCharacter(char buffer[])
   return 1;
 }
 
-int main(int argc, char *argv[])
+// int main(int argc, char *argv[])
+lexeme *lex_analyze(int list_flag, char *ch)
 {
-  FILE *fp = fopen(argv[1], "r");
 
-  char ch[500] = {'\0'};
+  char lexeme[500] = {'\0'};
   char buffer[12];
   int i = 0;
   int j = 0;
+  int lexeme_index = 0;
 
-  // read input into ch array
-  while (!feof(fp))
-  {
-    fscanf(fp, "%c", &ch[i]);
-    i++;
-  }
-  int max = i;
+  // // read input into ch array
+  // while (!feof(fp))
+  // {
+  //   fscanf(fp, "%c", &ch[i]);
+  //   i++;
+  // }
+  // int max = i;
 
-  printf("Lexeme List:\nlexeme\ttoken type\n");
+  if (list_flag)
+    printf("Lexeme List:\nlexeme\ttoken type\n");
 
   // go through input and analyse
   i = 0;
-  while (i < max && ch[i] != '\0')
+  while (ch[i] != '\0')
   {
     if (ch[i] == ' ' || iscntrl(ch[i]))
     {
@@ -257,26 +290,29 @@ int main(int argc, char *argv[])
         buffer[j] = ch[i];
         i++;
         j++;
-    		if (j == 11)
-    			break;
+        if (j == 11)
+          break;
       }
 
       // if too long for an identifier, write error
       if (j == 11 && (isalpha(ch[i]) || isdigit(ch[i])))
       {
         printf("Lexical Analyzer Error: maximum identifier length is 11\n");
-        while (isalpha(ch[i]) || isdigit(ch[i]))
-        {
-          i++;
-        }
+        return;
+
+        // while (isalpha(ch[i]) || isdigit(ch[i]))
+        // {
+        //   i++;
+        // }
       }
 
       buffer[j] = '\0';
 
       // check if keyword, else it is an identifier
-      if (j != 11 && !isKeyword(buffer))
+      if (j != 11 && !isKeyword(buffer, list_flag))
       {
-        printf("%s\t1\n", buffer);
+        if (list_flag)
+          printf("%s\t1\n", buffer);
       }
     }
     // check if starts with digit
@@ -287,29 +323,30 @@ int main(int argc, char *argv[])
         buffer[j] = ch[i];
         i++;
         j++;
-    		if (j == 5)
-    			break;
+        if (j == 5)
+          break;
       }
 
       // if has a letter, it is invalid
       if (isalpha(ch[i]))
       {
         printf("Lexical Analyzer Error: identifiers cannot begin with digits\n");
-    		while (isdigit(ch[i]) || isalpha(ch[i]))
-    			i++;
+        while (isdigit(ch[i]) || isalpha(ch[i]))
+          i++;
       }
 
       // otherwise it is a digit that is longer than 5
       else if (isdigit(ch[i]))
       {
         printf("Lexical Analyzer Error: maximum number length is 5\n");
-    		while (isdigit(ch[i]) || isalpha(ch[i]))
-    			i++;
+        while (isdigit(ch[i]) || isalpha(ch[i]))
+          i++;
       }
       else
       {
-		    buffer[j] = '\0';
-        printf("%s\t2\n", buffer);
+        buffer[j] = '\0';
+        if (list_flag)
+          printf("%s\t2\n", buffer);
       }
     }
     else
@@ -323,7 +360,7 @@ int main(int argc, char *argv[])
         {
           isComment = 1;
           while (!iscntrl(ch[i]))
-          	i++;
+            i++;
         }
 
         buffer[j] = ch[i];
@@ -331,8 +368,8 @@ int main(int argc, char *argv[])
         // take next character if there is a possibility of it being 2 characters long
         if (ch[i] == ':' || ch[i] == '<' || ch[i] == '>')
         {
-          i+= 1;
-          j+= 1;
+          i += 1;
+          j += 1;
           buffer[j] = ch[i];
         }
         i++;
@@ -342,7 +379,7 @@ int main(int argc, char *argv[])
       buffer[j] = '\0';
 
       // check if it is a keyword, otherwise it is an error
-      if (!isComment && !isSpecialCharacter(buffer))
+      if (!isComment && !isSpecialCharacter(buffer, list_flag))
       {
         printf("Lexical Analyzer Error: invalid symbol\n");
       }
