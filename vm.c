@@ -196,16 +196,21 @@ void execute(int trace_flag, instruction *code)
 
     // print instruction wrt the given guidelines
     printf("%d\t%s\t%d\t%d\t%d\t%d\t%d\t", currPc, opName, ir.l, ir.m, pc, bp, sp);
-    for (int i = stackStart; i <= sp; i++)
+
+    if (trace_flag)
     {
-      // if new AR, print a divider
-      if (bars[i] == 1)
+      for (int i = stackStart; i <= sp; i++)
       {
-        printf("| ");
+        // if new AR, print a divider
+        if (bars[i] == 1)
+        {
+          printf("| ");
+        }
+        printf("%d", PAS[i]);
+        printf(" ");
       }
-      printf("%d", PAS[i]);
-      printf(" ");
     }
+
     printf("\n");
   }
 }
