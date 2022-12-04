@@ -3,13 +3,6 @@
 #include <string.h>
 #include "compiler.h"
 
-typedef struct instruction
-{
-  int op;
-  int l;
-  int m;
-} instruction;
-
 // bars array used to help print divider at correct locations in stack to show new AR
 int PAS[500] = {0};
 int bars[500] = {0};

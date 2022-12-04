@@ -8,51 +8,6 @@
 #include "compiler.h"
 int flag_invalid = 0;
 
-typedef enum
-{
-  identifier = 1,
-  number = 2,
-  keyword_const = 3,
-  keyword_var = 4,
-  keyword_procedure = 5,
-  keyword_call = 6,
-  keyword_begin = 7,
-  keyword_end = 8,
-  keyword_if = 9,
-  keyword_then = 10,
-  keyword_else = 11,
-  keyword_while = 12,
-  keyword_do = 13,
-  keyword_read = 14,
-  keyword_write = 15,
-  keyword_def = 16,
-  period = 17,
-  assignment_symbol = 18,
-  minus = 19,
-  semicolon = 20,
-  left_curly_brace = 21,
-  right_curly_brace = 22,
-  equal_to = 23,
-  not_equal_to = 24,
-  less_than = 25,
-  less_than_or_equal_to = 26,
-  greater_than = 27,
-  greater_than_or_equal_to = 28,
-  plus = 29,
-  times = 30,
-  division = 31,
-  left_parenthesis = 32,
-  right_parenthesis = 33
-} token_type;
-
-typedef struct lexeme
-{
-  token_type type;
-  char identifier_name[12];
-  int number_value;
-  int error_type;
-} lexeme;
-
 lexeme *tokens;
 int token_index = 0;
 
