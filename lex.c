@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "compiler.h"
+int flag_invalid = 0;
 
 typedef enum
 {
@@ -120,6 +121,7 @@ int isKeyword(char buffer[], int list_flag)
   else if (strcmp(buffer, "null") == 0 || strcmp(buffer, "main") == 0)
   {
     printf("Lexical Analyzer Error: identifiers cannot be named 'null' or 'main'\n");
+    flag_invalid = 1;
   }
   else
   {
@@ -298,12 +300,12 @@ lexeme *lex_analyze(int list_flag, char *ch)
       if (j == 11 && (isalpha(ch[i]) || isdigit(ch[i])))
       {
         printf("Lexical Analyzer Error: maximum identifier length is 11\n");
-        return;
+        flag_invalid = 1;
 
-        // while (isalpha(ch[i]) || isdigit(ch[i]))
-        // {
-        //   i++;
-        // }
+        while (isalpha(ch[i]) || isdigit(ch[i]))
+        {
+          i++;
+        }
       }
 
       buffer[j] = '\0';
@@ -331,6 +333,7 @@ lexeme *lex_analyze(int list_flag, char *ch)
       if (isalpha(ch[i]))
       {
         printf("Lexical Analyzer Error: identifiers cannot begin with digits\n");
+        flag_invalid = 1;
         while (isdigit(ch[i]) || isalpha(ch[i]))
           i++;
       }
@@ -339,6 +342,7 @@ lexeme *lex_analyze(int list_flag, char *ch)
       else if (isdigit(ch[i]))
       {
         printf("Lexical Analyzer Error: maximum number length is 5\n");
+        flag_invalid = 1;
         while (isdigit(ch[i]) || isalpha(ch[i]))
           i++;
       }
@@ -382,6 +386,7 @@ lexeme *lex_analyze(int list_flag, char *ch)
       if (!isComment && !isSpecialCharacter(buffer, list_flag))
       {
         printf("Lexical Analyzer Error: invalid symbol\n");
+        flag_invalid = 1;
       }
     }
 
